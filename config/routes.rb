@@ -13,5 +13,6 @@ Rails.application.routes.draw do
     post "register", to: "registrations#create"
     post "login", to: "sessions#create"
     get "validate", to: "sessions#validate"
+    resources :pueblo_magicos
   end
 end
