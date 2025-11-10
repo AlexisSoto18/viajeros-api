@@ -1,7 +1,7 @@
 class Api::PlacesController < ApplicationController
   before_action :authorize_request
-  before_action :set_pueblo, only: [:index, :create]
-  before_action :set_place,  only: [:show, :update, :destroy]
+  before_action :set_pueblo, only: [ :index, :create ]
+  before_action :set_place,  only: [ :show, :update, :destroy ]
 
   # GET /api/pueblo_magicos/:pueblo_magico_id/places?kind=restaurant
   def index
@@ -26,12 +26,12 @@ class Api::PlacesController < ApplicationController
     if @place.approved? || current_user&.admin? || @place.user_id == current_user&.id
       render json: @place
     else
-      render json: { error: 'Not found' }, status: :not_found
+      render json: { error: "Not found" }, status: :not_found
     end
   end
 
   def update
-    return render json: { error: 'Forbidden' }, status: :forbidden unless current_user&.admin? || @place.user_id == current_user.id
+    return render json: { error: "Forbidden" }, status: :forbidden unless current_user&.admin? || @place.user_id == current_user.id
     if @place.update(place_params)
       render json: @place
     else
@@ -40,7 +40,7 @@ class Api::PlacesController < ApplicationController
   end
 
   def destroy
-    return render json: { error: 'Forbidden' }, status: :forbidden unless current_user&.admin? || @place.user_id == current_user.id
+    return render json: { error: "Forbidden" }, status: :forbidden unless current_user&.admin? || @place.user_id == current_user.id
     @place.destroy!
     head :no_content
   end
@@ -57,6 +57,6 @@ class Api::PlacesController < ApplicationController
 
   def place_params
     params.require(:place).permit(:name, :kind, :description, :address, :lat, :lon,
-                                  :slots_total, :slots_available, :opens_at, :closes_at, images: [])
+    :slots_total, :slots_available, :opens_at, :closes_at, images: [])
   end
 end
