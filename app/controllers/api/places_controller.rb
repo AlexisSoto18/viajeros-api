@@ -45,7 +45,27 @@ class Api::PlacesController < ApplicationController
     head :no_content
   end
 
+  def approve
+    if @place.update(approved: true)
+      render json: { message: "Lugar aprobado correctamente ✅", place: @place }, status: :ok
+    else
+      render json: { errors: @place.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  # POST /api/admin/places/:id/unapprove
+  def unapprove
+    if @place.update(approved: false)
+      render json: { message: "Lugar desaprobado ❌", place: @place }, status: :ok
+    else
+      render json: { errors: @place.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
+  def authorize_admin
+    render json: { error: "Acceso no autorizado" }, status: :forbidden unless current_user&.admin?
+  end
 
   def set_pueblo
     @pueblo = PuebloMagico.find(params[:pueblo_magico_id])
