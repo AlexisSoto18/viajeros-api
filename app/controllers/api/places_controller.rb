@@ -31,13 +31,24 @@ class Api::PlacesController < ApplicationController
   end
 
   def update
+    # Solo el dueño o el admin pueden editar
     return render json: { error: "Forbidden" }, status: :forbidden unless current_user&.admin? || @place.user_id == current_user.id
-    if @place.update(place_params)
+
+    # Si el usuario NO es admin, forzamos que se desapruebe
+    if current_user&.host?
+      @place.assign_attributes(place_params)
+      @place.approved = false
+    else
+      @place.assign_attributes(place_params)
+    end
+
+    if @place.save
       render json: @place
     else
       render json: { errors: @place.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
 
   def destroy
     return render json: { error: "Forbidden" }, status: :forbidden unless current_user&.admin? || @place.user_id == current_user.id
